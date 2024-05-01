@@ -8,14 +8,24 @@
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" class="form-control" id="title" name="title">
+                @if ($errors->title)
+                    <small class='text-danger'>{{$errors->first('title')}}</small>
+                @endif
             </div>
+            
             <div class="mb-3">
                 <label for="body" class="form-label">Body</label>
                 <input type="textbox" class="form-control" id="body" name="body">
+                @if ($errors->body)
+                    <small class='text-danger'>{{$errors->first('body')}}</small>
+                @endif
             </div>
             <div class="mb-3">
                 <label class="form-label" for="image">Choose an Image</label>
                 <input type="file" class="form-control" id="image" name="image">
+                @if ($errors->image)
+                    <small class='text-danger'>{{$errors->first('image')}}</small>
+                @endif
             </div>
             <div class="mb-3">
                 <label class="form-label" for="author">Posted by</label>

@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use Illuminate\Http\Request;
 use App\Models\Posts;
 use App\Models\User;
+use App\Models\Comments;
+
 
 class PostController extends Controller
 {
 
     function home (){
-        $posts = Posts::paginate(1);
+        $posts = Posts::paginate(6);
 
         return view("index", ["posts"=>$posts]);
     }
 
     function show($id){
         $post = Posts::findOrFail($id);
-        return view('posts.show', ["post"=>$post]);
+        $users = User::all();
+        return view('posts.show', ["post"=>$post, "users"=>$users]);
 
     }
 
@@ -36,14 +40,17 @@ class PostController extends Controller
         return view('posts.create', ["users"=>$users]);
     }
 
-    function store() {
+    function store(StorePostRequest $request) {
         $request_params = request();
         $file_path = $this->file_operations($request_params);
-        $request_params = request()->all();
+        $validated = request()->validated();
+        if ($validated->fails()) {
+            return redirect()->route('posts.create')->withErrors($validated);
+        }
         $post = new Posts();
-        $post->title = $request_params['title'];
-        $post->body = $request_params['body'];
-        $post->author = $request_params['author'];
+        $post->title = $validated['title'];
+        $post->body = $validated['body'];
+        $post->author = $validated['author'];
         $post->image = $file_path;
         $post->save();
         return to_route("posts.show", $post);
@@ -85,6 +92,11 @@ class PostController extends Controller
     function destroy($id) {
         $post = Posts::findOrFail($id);
         $post->delete();
+        return to_route('index');
+    }
+
+    function restore() {
+        Posts::onlyTrashed()->restore();
         return to_route('index');
     }
 }
