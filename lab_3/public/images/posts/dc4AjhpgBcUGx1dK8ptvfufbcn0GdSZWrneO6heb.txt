@@ -1,0 +1,137 @@
+[sensorId:-----,reading:R,type:value](default=0)
+
+
+LOGIN 
+
+var userName = getLoggedInUser().username;
+console.log(userName)
+ExecuteQueryModified(`SELECT * FROM APPLICATION_---- WHERE ownerName = '${userName}'`, login_callbackFunc);
+
+function login_callbackFunc(error, xhr) {
+  // console.log(xhr.response)
+  if (xhr.response) {
+    DataArr = JSON.parse(xhr.response);
+    console.log(DataArr)
+    if (DataArr.length > 0) {
+      bagID = DataArr[0].bagId //CHECK THIS;
+      sessionStorage.setItem("bagID", bagID);
+      window.location.href = `rte.html?project=----&page=-`;
+    } else {
+      Warning("You don't have any bags in the system.");
+    }
+  }
+}
+-----------------------------------------------------------------------------------------
+Profile 
+ history button ----> window.location.href = `https://learning.masterofthings.com/rte.html?project=----&page=-`
+ 
+ Lastseen button ----> window.location.href = `https://learning.masterofthings.com/rte.html?project=----&page=-`
+ 
+ 
+ --------------------------------------------------------------------------------------
+ History
+
+  var bID = sessionStorage.getItem("bagID");
+ console.log(bID)
+ if (bID === null || bID === "" || bID === undefined) {
+   warning("You must login First ");
+   window.location.href = `https://learning.masterofthings.com/rte.html?project=-----&page=-`
+ } else {
+   ExecuteQueryModified(`SELECT TimeStamp,
+       currentLuxValue,Rid,
+       CASE 
+           WHEN currentLuxValue > 30 THEN 'open'
+           ELSE 'close'
+       END AS bagStatus,
+        CASE
+       WHEN Rid < 500 THEN 'in border'
+       ELSE 'out of boarder'
+       END AS boundaryStatus
+       
+FROM GROUP_${bID} 
+ORDER BY TimeStamp DESC 
+LIMIT 100;
+
+  `, historyGridBackfun);
+ }
+
+
+
+ function historyGridBackfun(error, xhr) {
+   if (xhr.response) {
+     Grid_1DataArr = JSON.parse(xhr.response);
+     SetPluginParameterValue('Grid 1', 'SQL query statement', Grid_1DataArr);
+     DrawPlugin('Grid 1');
+   }
+ }
+-----------------------------------------------------------------------------------
+Last seen 
+onpageload --->
+ var bID = sessionStorage.getItem("bagID");
+ console.log(bID)
+ if (bID === null || bID === "" || bID === undefined) {
+   warning("You must login First ");
+   window.location.href = `https://learning.masterofthings.com/rte.html?project=----&page=-`
+ } else {
+   ExecuteQueryModified(`SELECT TimeStamp,
+       currentLuxValue,Rid,Lat,Lng
+       CASE 
+           WHEN currentLuxValue > 30 THEN 'open'
+           ELSE 'close'
+       END AS bagStatus,
+        CASE
+       WHEN Rid < 500 THEN 'in border'
+       ELSE 'out of boarder'
+       END AS boundaryStatus
+       
+FROM GROUP_${bID} 
+ORDER BY TimeStamp DESC 
+LIMIT 1;
+
+  `, historyGridBackfun);
+ }
+
+
+
+ function historyGridBackfun(error, xhr) {
+   if (xhr.response) {
+     Grid_1DataArr = JSON.parse(xhr.response);
+     console.log("hhello", Grid_1DataArr)
+     SetPluginParameterValue('Grid 1', 'SQL query statement', Grid_1DataArr);
+     DrawPlugin('Grid 1');
+   }
+ }
+
+
+timer---->
+
+var bID = sessionStorage.getItem("bagID");
+
+ExecuteQueryModified(`
+SELECT *
+FROM GROUP_${bID} 
+ORDER BY TimeStamp DESC 
+LIMIT 1;
+`, historyGridBackfun, 'Grid 1');
+
+function historyGridBackfun(error, xhr) {
+  if (xhr.response) {
+    Grid_1DataArr = JSON.parse(xhr.response);
+    let lux = Grid_1DataArr[0].currentLuxValue
+    if (lux > 30) {
+    // BAG IS OPEN
+      SetPluginParameterValue('Map 1', 'Marker URL', 'PUT YOUR IMAGE');
+      DrawPlugin('Map 1');
+      SetPluginParameterValue('Grid 1', 'SQL query statement', Grid_1DataArr);
+      DrawPlugin('Grid 1');
+    } else {
+    // BAG IS CLOSE
+      SetPluginParameterValue('Map 1', 'Marker URL', 'PUT YOUR IMAGE ');
+      DrawPlugin('Map 1')
+      SetPluginParameterValue('Grid 1', 'SQL query statement', Grid_1DataArr);
+      DrawPlugin('Grid 1');
+    }
+
+  }
+}
+

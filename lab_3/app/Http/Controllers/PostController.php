@@ -62,7 +62,7 @@ class PostController extends Controller
         $post = Posts::findOrFail($id);
         $file_path = $this->file_operations(request());
         
-        $request_params = request()->validated();
+        $request_params = $request->validated();
         if ($file_path) {
             $post->image = $file_path;
         }

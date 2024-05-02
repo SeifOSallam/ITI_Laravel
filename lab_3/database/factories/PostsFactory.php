@@ -16,12 +16,18 @@ class PostsFactory extends Factory
      */
     public function definition(): array
     {
+        $title = fake()->sentence();
+        $body = substr(fake()->paragraph(), 0, 100);
         $image = 'default.png';
+        $slug = str_slug($title);
+        $authorId = rand(2,11);
+
         return [
-            'title' => fake()->sentence(),
-            'body' => substr(fake()->paragraph(), 0, 100),
+            'title' => $title,
+            'body' => $body,
             'image' => $image,
-            'author' => rand(2,11),
+            'slug' => $slug,
+            'author' => $authorId,
         ];
     }
 }

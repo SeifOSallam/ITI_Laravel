@@ -6,11 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePostRequest extends FormRequest
 {
-
     protected function failedValidation($validator)
     {
-        $this->redirectRoute = route('posts.edit', ['id' => $this->id]);
-        parent::failedValidation($validator);
+        return redirect()->back()->withErrors($validator)->withInput();
     }
     /**
      * Determine if the user is authorized to make this request.
@@ -28,8 +26,8 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'unique:posts|max:20',
-            'body' => 'max:150',
+            'title' => 'unique:posts|max:20|min:3',
+            'body' => 'max:150|min:10',
             'image' => 'image|mimes:png,jpg,jpeg,svg',
             'author' => 'required|exists:users,id',
         ];
