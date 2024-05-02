@@ -9,10 +9,16 @@
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" class="form-control" name="title" id="title" value="{{$post['title']}}">
+                @error('title')
+                    <small class='text-danger'>{{$message}}</small>
+                @enderror
             </div>
             <div class="mb-3">
                 <label for="body" class="form-label">Body</label>
                 <input type="textbox" class="form-control" name="body" id="body" value="{{$post['body']}}">
+                @error('body')
+                    <small class='text-danger'>{{$message}}</small>
+                @enderror
             </div>
             <div class="mb-3">
                 <label class="form-label" for="image">Choose an Image</label>
@@ -20,6 +26,9 @@
                 @isset($post['image'])
                     <small>Current Image: {{ $post['image']  }}</small>
                 @endisset
+                @error('image')
+                    <small class='text-danger'>{{$message}}</small>
+                @enderror
             </div>
             <div class="mb-3">
                 <label class="form-label" for="author">Posted by</label>
@@ -34,6 +43,9 @@
                         </option>
                     @endforeach
                 </select>
+                @error('author')
+                    <small class='text-danger'>{{$message}}</small>
+                @enderror
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

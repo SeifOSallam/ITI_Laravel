@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdatePostRequest;
 use App\Models\Posts;
 use App\Models\User;
 use App\Models\Comments;
@@ -41,12 +41,8 @@ class PostController extends Controller
     }
 
     function store(StorePostRequest $request) {
-        $request_params = request();
-        $file_path = $this->file_operations($request_params);
-        $validated = request()->validated();
-        if ($validated->fails()) {
-            return redirect()->route('posts.create')->withErrors($validated);
-        }
+        $validated = $request->validated();
+        $file_path = $this->file_operations($request);
         $post = new Posts();
         $post->title = $validated['title'];
         $post->body = $validated['body'];
@@ -62,12 +58,11 @@ class PostController extends Controller
         return view('posts.edit', ["post"=>$post, "users"=>$users]);
     }
 
-    function update($id) {
+    function update($id, UpdatePostRequest $request) {
         $post = Posts::findOrFail($id);
-    
-        $request_params = request()->all();
         $file_path = $this->file_operations(request());
-    
+        
+        $request_params = request()->validated();
         if ($file_path) {
             $post->image = $file_path;
         }

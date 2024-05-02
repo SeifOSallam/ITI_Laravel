@@ -4,29 +4,33 @@
 @endphp
 @section("content")
     <h1 style="background-color: white;"> All posts </h1>
-    <a href='{{route('posts.create')}}' class='btn btn-info rounded-circle' style='font-size:1.5rem'>
-        <x-heroicon-o-plus />
-    </a>
+    <span style='width: 50px; height: 50px;'>
+      <a href='{{route('posts.create')}}' class='btn btn-primary'>
+          +
+      </a>
+    </span>
     <a href="{{route('posts.restore')}}" class='btn btn-success'>
       Restore
     </a>
     <table class='table'>
         <tr>
-            <td>ID</td>
-            <td>Title</td>
-            <td>Body</td>
-            <td>Image</td>
-            <td>Created At</td>
-            <td>Show</td>
-            <td>Edit</td>
-            <td>Delete</td>
+            <th>ID</th>
+            <th style='width: 15%'>Title</th>
+            <th style='width: 15%'>Body</th>
+            <th>Image</th>
+            <th>Slug</th>
+            <th>Created At</th>
+            <th>Show</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
         @foreach($posts as $post)
             <tr>
                 <td>{{$post['id']}}</td>
                 <td>{{$post['title']}}</td>
                 <td>{{$post['body']}}</td>
-                <td>{{$post['image']}}</td>
+                <td><img src={{asset('images/posts/'.$post['image'])}} style='width:100px;height:100px;'></td>
+                <td>{{$post['slug']}}</td>
                 <td>{{new Carbon($post['createdAt'])}}</td>
                 <td><a href="{{route('posts.show', $post['id'])}}" class="btn btn-info">Show</a></td>
                 <td><a href="{{route('posts.edit', $post['id'])}}" class="btn btn-warning">Edit</a></td>

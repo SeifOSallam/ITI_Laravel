@@ -4,10 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePostRequest extends FormRequest
+class UpdatePostRequest extends FormRequest
 {
 
-    protected $redirectRoute = "posts.create";
+    protected function failedValidation($validator)
+    {
+        $this->redirectRoute = route('posts.edit', ['id' => $this->id]);
+        parent::failedValidation($validator);
+    }
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -24,9 +28,9 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|unique:posts|min:3|max:20',
-            'body' => 'required|min:10|max:150',
-            'image' => 'required|image|mimes:png,jpg,jpeg,svg',
+            'title' => 'unique:posts|max:20',
+            'body' => 'max:150',
+            'image' => 'image|mimes:png,jpg,jpeg,svg',
             'author' => 'required|exists:users,id',
         ];
     }
@@ -39,16 +43,12 @@ class StorePostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'A title is required',
             'title.unique' => 'Title must be unique',
             'title.max' => 'Title must not exceed 20 characters',
-            'body.required' => 'A body is required',
             'body.max' => 'Body must not exceed 150 characters',
-            'image.required' => 'An image is required',
             'image.mimes' => 'Image format must be png, jpg, jpeg or svg',
             'author.required' => 'An author is required',
             'author.exists' => "This author doesn't exist",
         ];
     }
-    
 }

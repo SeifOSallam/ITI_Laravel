@@ -34,6 +34,9 @@
                         <option value='{{$user['id']}}'>{{$user['name']}}</option>
                     @endforeach
                 </select>
+                @if ($errors->author)
+                    <small class='text-danger'>{{$errors->first('author')}}</small>
+                @endif
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

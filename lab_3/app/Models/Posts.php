@@ -17,4 +17,10 @@ class Posts extends Model
     }
 
     protected $fillable = ['title', 'body', 'image', 'author'];
+
+    public function setTitleAttribute($value)
+    {
+        $this->attributes['title'] = $value;
+        $this->attributes['slug'] = str_slug($value);
+    }
 }
